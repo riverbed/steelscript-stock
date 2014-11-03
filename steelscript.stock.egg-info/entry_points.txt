@@ -1,0 +1,3 @@
+[portal.plugins]
+stock = steelscript.stock.appfwk.plugin:Plugin
+

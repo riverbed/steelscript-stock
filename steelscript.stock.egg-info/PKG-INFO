@@ -1,0 +1,20 @@
+Metadata-Version: 1.1
+Name: steelscript.stock
+Version: unknown
+Summary: simple stock report
+Home-page: UNKNOWN
+Author: wg
+Author-email: wg@s.n
+License: MIT
+Description: 
+        steelscript.stock
+        ====================
+        simple stock report
+        
+        
+Platform: UNKNOWN
+Classifier: Framework :: Django
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: System Administrators
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Software Development
