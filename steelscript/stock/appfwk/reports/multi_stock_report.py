@@ -21,6 +21,7 @@ The typical structure is as follows:
 
 See the documeantion or sample plugin for more details
 """
+
 from steelscript.appfwk.apps.report.models import Report
 from steelscript.appfwk.apps.datasource.models import Column
 import steelscript.appfwk.apps.report.modules.yui3 as yui3
@@ -28,22 +29,29 @@ import steelscript.appfwk.apps.report.modules.yui3 as yui3
 # Import the datasource module for this plugin (if needed)
 import steelscript.stock.appfwk.datasources.stock_source as stock
 
-report = Report.create("Stock Report-CandleStick", position=1)
+report = Report.create("Stock Report-Multiple Stocks", position=1)
 
 report.add_section()
 
 #
 # Define a stock table with current prices with a list of stocks
 #
-table = stock.SingleStockTable.create(
-    name='stock-table', duration='52w', resolution='1d', stock_symbol=None)
+
+table = stock.MultiStockPriceTable.create(name='multi-stock-price',
+                                          duration='52w', resolution='1d',
+                                          stock_symbol=None)
 
 # Add columns for time and 3 stock columns
 table.add_column('date', 'Date', datatype=Column.DATATYPE_STRING, iskey=True)
-table.add_column('open', 'Open')
-table.add_column('high', 'High')
-table.add_column('low', 'Low')
-table.add_column('close', 'Close')
 
 # Bind the table to a widget for display
-report.add_widget(yui3.CandleStickWidget, table, 'Daily Prices', width=12)
+report.add_widget(yui3.LineWidget, table, 'Close Prices', width=12,
+                  dynamic=True)
+
+
+# Implement a widget to display the daily volumns for multiple stocks
+table = stock.MultiStockVolumeTable.create(name='multi-stock-volume',
+                                           duration='52w', resolution='1d')
+table.add_column('date', 'Date', datatype=Column.DATATYPE_STRING, iskey=True)
+report.add_widget(yui3.BarWidget, table, 'Daily Volumes', width=12,
+                  dynamic=True)

@@ -39,7 +39,10 @@ This file defines a device associated with this plugin
 # simultaneously.
 #
 
+from steelscript.stock.core.stock import StockGenerator
+
+
 def new_device_instance(host, port, auth):
     # This function must be implemented and should return
     # a device object.
-    return None
+    return StockGenerator()
