@@ -1,0 +1,15 @@
+*~
+
+*.pyc
+
+build
+dist
+*.egg-info
+RELEASE-VERSION
+
+docs/html
+
+*.swp
+.DS_Store
+.idea/
+.tox/
