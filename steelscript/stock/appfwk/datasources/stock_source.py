@@ -23,7 +23,7 @@ files in this directory named accordingly.
 import logging
 import urllib
 
-
+from steelscript.common.timeutils import TimeParser
 from steelscript.appfwk.apps.datasource.models import \
     DatasourceTable, TableQueryBase, Column, TableField
 
@@ -176,15 +176,19 @@ class StockQuery(TableQueryBase):
         # Dict storing stock prices/volumes according to specific report
         self.data = []
 
-    def get_historical_prices(self, symbol, measures):
+    def get_historical_prices(self, symbol, measures, date_obj=False):
         """Get historical prices for the given ticker symbol.
-        Returns a list of dicts keyed by dates and price names
+        Returns a list of dicts keyed by 'date' and measures
 
         :param string symbol: symbol of one stock to query
         :param list measures: a list of prices that needs to be queried,
-        should be a subset of ["open", "high", "low", "close"]
+        should be a subset of ["open", "high", "low", "close", "volume"]
+        :param boolean date_obj: dates are converted to datetime objects
+        from date strings if True. Otherwise, dates are stored as strings
         """
         try:
+            # obtain time parser object if date_obj is True
+            tp = TimeParser() if date_obj else None
             reso = 'w' if str(self.resolution)[0:6] == '5 days' else 'd'
             url = ('http://ichart.finance.yahoo.com/table.csv?s=%s&' % symbol +
                    'a=%s&' % str(int(self.t0[5:7]) - 1) +
@@ -199,7 +203,8 @@ class StockQuery(TableQueryBase):
             days = urllib.urlopen(url).readlines()
             for day in reversed(days[1:]):
                 day = day[:-2].split(',')
-                daily_prices = {'date': day[0]}
+                date = tp.parse(day[0] + ' 00:00') if tp else day[0]
+                daily_prices = {'date': date}
                 for m in measures:
                     if m in self.mapping:
                         daily_prices[m] = float(day[self.mapping[m]])
@@ -245,6 +250,7 @@ class MultiStockQuery(StockQuery):
                     self.data[-len(his)+i] = merged
             else:
                 # len(self.data)<len(his)
+                # current stock has less history than previous ones
                 for i in range(len(self.data)):
                     merged = dict(self.data[i].items() +
                                   his[-len(self.data)+i].items())
@@ -261,9 +267,10 @@ class MultiStockQuery(StockQuery):
             StockColumn.create(self.table, ticker, ticker.upper())
             if measure is None:
                 measure = "close"
-            history = self.get_historical_prices(ticker, [measure])
+            history = self.get_historical_prices(ticker, [measure],
+                                                 date_obj=True)
             for day in history:
-                # replace history price name key with ticker
+                # replace history price measure key with ticker
                 day[ticker] = day[measure]
                 del day[measure]
             self.merge_price_history(history)

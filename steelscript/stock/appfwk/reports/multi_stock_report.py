@@ -42,16 +42,14 @@ table = stock.MultiStockPriceTable.create(name='multi-stock-price',
                                           stock_symbol=None)
 
 # Add columns for time and 3 stock columns
-table.add_column('date', 'Date', datatype=Column.DATATYPE_STRING, iskey=True)
+table.add_column('date', 'Date', datatype='time', iskey=True)
 
 # Bind the table to a widget for display
-report.add_widget(yui3.LineWidget, table, 'Close Prices', width=12,
-                  dynamic=True)
+report.add_widget(yui3.DailyTimeSeriesWidget, table, 'Close Prices', width=12)
 
 
 # Implement a widget to display the daily volumns for multiple stocks
 table = stock.MultiStockVolumeTable.create(name='multi-stock-volume',
                                            duration='52w', resolution='1d')
-table.add_column('date', 'Date', datatype=Column.DATATYPE_STRING, iskey=True)
-report.add_widget(yui3.BarWidget, table, 'Daily Volumes', width=12,
-                  dynamic=True)
+table.add_column('date', 'Date', datatype='time', iskey=True)
+report.add_widget(yui3.DailyTimeSeriesBarWidget, table, 'Daily Volumes', width=12)
