@@ -45,11 +45,11 @@ table = stock.MultiStockPriceTable.create(name='multi-stock-price',
 table.add_column('date', 'Date', datatype='time', iskey=True)
 
 # Bind the table to a widget for display
-report.add_widget(yui3.DailyTimeSeriesWidget, table, 'Close Prices', width=12)
+report.add_widget(yui3.TimeSeriesWidget, table, 'Close Prices', width=12, daily=True)
 
 
 # Implement a widget to display the daily volumns for multiple stocks
 table = stock.MultiStockVolumeTable.create(name='multi-stock-volume',
                                            duration='52w', resolution='1d')
 table.add_column('date', 'Date', datatype='time', iskey=True)
-report.add_widget(yui3.DailyTimeSeriesBarWidget, table, 'Daily Volumes', width=12)
+report.add_widget(yui3.TimeSeriesWidget, table, 'Daily Volumes', width=12, daily=True, bar=True)
