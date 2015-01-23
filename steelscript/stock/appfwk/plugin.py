@@ -10,10 +10,10 @@ from steelscript.appfwk.apps.plugins import Plugin as AppsPlugin
 
 
 class Plugin(AppsPlugin):
-    title = 'stock chart'
-    description = 'simple stock report'
+    title = 'Daily Stock Report Plugin'
+    description = 'A stock report plugin providing daily stock prices and volumes'
     version = pkg_resources.get_distribution('steelscript.stock').version
-    author = 'wg'
+    author = 'Riverbed Technology'
 
     enabled = True
     can_disable = True
