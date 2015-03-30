@@ -31,7 +31,7 @@ from steelscript.appfwk.apps.datasource.forms import (
     fields_add_time_selection, fields_add_resolution,
     DateTimeField, ReportSplitDateWidget)
 
-from steelscript.stock.core.stock import get_historical_prices
+from steelscript.stock.core.app import get_historical_prices
 
 logger = logging.getLogger(__name__)
 

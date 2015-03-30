@@ -131,11 +131,11 @@ class StockApp(Application):
                               (begin_date, self.today, end_date))
 
     def main(self):
-        resolution = '5 days' if self.options.resolution == 'weekly' else '1 day'
+        rsl = '5 days' if self.options.resolution == 'weekly' else '1 day'
         pprint(get_historical_prices(self.options.begin,
                                      self.options.end,
                                      self.options.symbol,
                                      self.options.measures.split(','),
-                                     resolution))
+                                     rsl))
 if __name__ == '__main__':
     StockApp().run()
