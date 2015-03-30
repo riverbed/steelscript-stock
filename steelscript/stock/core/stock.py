@@ -84,8 +84,8 @@ class StockApp(Application):
         parser.add_option('-e', '--end', help='end date as YYYY-MM-DD',
                           default=self.today)
 
-        parser.add_option('-r', '--resolution', default='1',
-                          help='1 (daily) or 5 (weekly)')
+        parser.add_option('-r', '--resolution', default='daily',
+                          help='daily or weekly')
         parser.add_option('-s', '--symbol', help='symbol of the stock')
         parser.add_option('-m', '--measures',
                           help=("list of measures to inquire, "
@@ -106,7 +106,7 @@ class StockApp(Application):
                 if measure not in ['open', 'high', 'low', 'close', 'volume']:
                     self.parser.error("Invalid measure %s" % measure)
 
-        if self.options.resolution not in ['1', '5']:
+        if self.options.resolution not in ['daily', 'weekly']:
             self.parser.error("Invalid resolution %s" %
                               self.options.resolution)
 
@@ -131,7 +131,7 @@ class StockApp(Application):
                               (begin_date, self.today, end_date))
 
     def main(self):
-        resolution = '5 days' if self.options.resolution == '5' else '1 day'
+        resolution = '5 days' if self.options.resolution == 'weekly' else '1 day'
         pprint(get_historical_prices(self.options.begin,
                                      self.options.end,
                                      self.options.symbol,
