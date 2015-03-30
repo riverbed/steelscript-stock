@@ -56,7 +56,6 @@ def get_historical_prices(begin, end, symbol, measures,
                'f=%s&' % str(int(end[0:4])) +
                'g=%s&' % reso +
                'ignore=.csv')
-        print url
         ret = []
         days = urllib.urlopen(url).readlines()
         for day in reversed(days[1:]):
