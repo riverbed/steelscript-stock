@@ -36,7 +36,7 @@ report.add_section()
 # Define a stock table with current prices with a list of stocks
 #
 table = stock.SingleStockTable.create(
-    name='stock-table', duration='52w', resolution='1d', stock_symbol=None)
+    name='stock-table', duration='52w', resolution='day', stock_symbol=None)
 
 # Add columns for time and 3 stock columns
 table.add_column('date', 'Date', datatype=Column.DATATYPE_STRING, iskey=True)

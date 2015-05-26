@@ -23,7 +23,6 @@ See the documeantion or sample plugin for more details
 """
 
 from steelscript.appfwk.apps.report.models import Report
-from steelscript.appfwk.apps.datasource.models import Column
 import steelscript.appfwk.apps.report.modules.yui3 as yui3
 
 # Import the datasource module for this plugin (if needed)
@@ -38,18 +37,18 @@ report.add_section()
 #
 
 table = stock.MultiStockPriceTable.create(name='multi-stock-price',
-                                          duration='52w', resolution='1d',
+                                          duration='52w', resolution='day',
                                           stock_symbol=None)
 
 # Add columns for time and 3 stock columns
-table.add_column('date', 'Date', datatype='time', iskey=True)
+table.add_column('date', 'Date', datatype='date', iskey=True)
 
 # Bind the table to a widget for display
-report.add_widget(yui3.TimeSeriesWidget, table, 'Close Prices', width=12, daily=True)
+report.add_widget(yui3.TimeSeriesWidget, table, 'Close Prices', width=12)
 
 
 # Implement a widget to display the daily volumns for multiple stocks
 table = stock.MultiStockVolumeTable.create(name='multi-stock-volume',
-                                           duration='52w', resolution='1d')
-table.add_column('date', 'Date', datatype='time', iskey=True)
-report.add_widget(yui3.TimeSeriesWidget, table, 'Daily Volumes', width=12, daily=True, bar=True)
+                                           duration='52w', resolution='day')
+table.add_column('date', 'Date', datatype='date', iskey=True)
+report.add_widget(yui3.TimeSeriesWidget, table, 'Daily Volumes', width=12)

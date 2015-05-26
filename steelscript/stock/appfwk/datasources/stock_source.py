@@ -21,9 +21,7 @@ files in this directory named accordingly.
 """
 
 import logging
-import urllib
 
-from steelscript.common.timeutils import TimeParser
 from steelscript.appfwk.apps.datasource.models import \
     DatasourceTable, TableQueryBase, Column, TableField
 
@@ -50,8 +48,8 @@ class StockTable(DatasourceTable):
     _column_class = 'StockColumn'
     FIELD_OPTIONS = {'duration': '4w',
                      'durations': ('4w', '12w', '24w', '52w', '260w', '520w'),
-                     'resolution': '1d',
-                     'resolutions': ('1d', '5d')
+                     'resolution': 'day',
+                     'resolutions': ('day', 'week')
                      }
 
     def post_process_table(self, field_options):
@@ -66,7 +64,7 @@ class StockTable(DatasourceTable):
                               resolutions=field_options['resolutions'])
 
         # Add end date field
-        self.fields_add_end_date('end_date', 'now-0')
+        self.fields_add_end_date()
 
     def fields_add_stock_symbol(self, help_text, keyword='stock_symbol',
                                 initial=None):
@@ -78,8 +76,12 @@ class StockTable(DatasourceTable):
         field.save()
         self.fields.add(field)
 
-    def fields_add_end_date(self, keyword, initial_end_date):
-        field = TableField(keyword=keyword,
+    def fields_add_end_date(self, initial_end_date='now-0'):
+        # Add a date field
+        # the front javascript code will determine the default date
+        # according to initial_end_date, so if initial_end_date is
+        # 'now-0', today will be the default end date
+        field = TableField(keyword='end_date',
                            label='End Date',
                            field_cls=DateTimeField,
                            field_kwargs={'widget': ReportSplitDateWidget,
@@ -144,13 +146,13 @@ class StockQuery(TableQueryBase):
         """Prepare data for query to run"""
         criteria = self.job.criteria
 
-        # Time selection is available via criterai.starttime and endtime.
         # These are date time strings in the format of YYYY-MM-DD
-        self.t0 = str(criteria.end_date - criteria.duration)[:10]
-        self.t1 = str(criteria.end_date)[:10]
+        self.t0 = str((criteria.end_date - criteria.duration).date())
+        self.t1 = str(criteria.end_date.date())
 
-        # Time resolution is a timedelta object
-        self.resolution = criteria.resolution
+        # Resolution is either day or week
+        self.resolution = ('day' if str(criteria.resolution).
+                           startswith('1 day') else 'week')
 
         # stock symbol string (can have multiple symbol)
         self.symbol = criteria.stock_symbol
@@ -185,20 +187,33 @@ class MultiStockQuery(StockQuery):
         if not self.data:
             self.data = his
         else:
-            if len(self.data) >= len(his):
-                for i in range(len(his)):
-                    # merging the new ticker daily price
-                    merged = dict(self.data[-len(his)+i].items() +
-                                  his[i].items())
-                    self.data[-len(his)+i] = merged
-            else:
-                # len(self.data)<len(his)
-                # current stock has less history than previous ones
-                for i in range(len(self.data)):
-                    merged = dict(self.data[i].items() +
-                                  his[-len(self.data)+i].items())
-                    his[-len(self.data)+i] = merged
-                self.data = his
+            # As some stock might be off market on certain random days
+            # thus merging the dicts need to be done according to date
+            # As the stock data is sorted based on date
+            # while neither lists (self.data and his) is empty
+            # pop the first elements of the each list
+            # if the dates are the same, merging them into one dict,
+            # append to merged, if not the same, append the dict with
+            # smaller dates and then the other to merged. when one
+            # list is empty, just append the other list to merged
+            merged = []
+            while self.data and his:
+                rec1 = self.data[0]
+                rec2 = his[0]
+                if rec1['date'] == rec2['date']:
+                    rec1.update(rec2)
+                    merged.append(rec1)
+                    self.data.pop(0)
+                    his.pop(0)
+                elif rec1['date'] < rec2['date']:
+                    merged.append(rec1)
+                    self.data.pop(0)
+                else:
+                    merged.append(rec2)
+                    his.pop(0)
+            merged.extend(self.data)
+            merged.extend(his)
+            self.data = merged
 
     def run_query(self, measure=None):
         # delete non-key columns associated with table
@@ -207,6 +222,8 @@ class MultiStockQuery(StockQuery):
                 c.delete()
 
         for ticker in self.symbol.split(","):
+            # strip white spaces
+            ticker = ticker.strip()
             StockColumn.create(self.table, ticker, ticker.upper())
             if measure is None:
                 measure = "close"
