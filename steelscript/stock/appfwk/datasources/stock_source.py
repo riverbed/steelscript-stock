@@ -21,6 +21,7 @@ files in this directory named accordingly.
 """
 
 import logging
+import pandas
 
 from steelscript.appfwk.apps.datasource.models import \
     DatasourceTable, TableQueryBase, Column, TableField
@@ -147,8 +148,9 @@ class StockQuery(TableQueryBase):
         criteria = self.job.criteria
 
         # These are date time strings in the format of YYYY-MM-DD
-        self.t0 = str((criteria.end_date - criteria.duration).date())
-        self.t1 = str(criteria.end_date.date())
+        start_date = criteria.end_date - criteria.duration
+        self.t0 = start_date.date().strftime('%Y-%m-%d')
+        self.t1 = criteria.end_date.date().strftime('%Y-%m-%d')
 
         # Resolution is either day or week
         self.resolution = ('day' if str(criteria.resolution).
@@ -158,11 +160,12 @@ class StockQuery(TableQueryBase):
         self.symbol = criteria.stock_symbol
 
         # Dict storing stock prices/volumes according to specific report
-        self.data = []
+        self.data = None
 
     def get_data(self, symbol, measures, date_obj=False):
-        return get_historical_prices(self.t0, self.t1, symbol, measures,
+        data = get_historical_prices(self.t0, self.t1, symbol, measures,
                                      self.resolution, date_obj=date_obj)
+        return pandas.DataFrame(data)
 
 
 class SingleStockQuery(StockQuery):
@@ -184,36 +187,12 @@ class MultiStockQuery(StockQuery):
 
     def merge_price_history(self, his):
         """Merge history of another stock with self.data"""
-        if not self.data:
+        if self.data is None:
             self.data = his
         else:
             # As some stock might be off market on certain random days
-            # thus merging the dicts need to be done according to date
-            # As the stock data is sorted based on date
-            # while neither lists (self.data and his) is empty
-            # pop the first elements of the each list
-            # if the dates are the same, merging them into one dict,
-            # append to merged, if not the same, append the dict with
-            # smaller dates and then the other to merged. when one
-            # list is empty, just append the other list to merged
-            merged = []
-            while self.data and his:
-                rec1 = self.data[0]
-                rec2 = his[0]
-                if rec1['date'] == rec2['date']:
-                    rec1.update(rec2)
-                    merged.append(rec1)
-                    self.data.pop(0)
-                    his.pop(0)
-                elif rec1['date'] < rec2['date']:
-                    merged.append(rec1)
-                    self.data.pop(0)
-                else:
-                    merged.append(rec2)
-                    his.pop(0)
-            merged.extend(self.data)
-            merged.extend(his)
-            self.data = merged
+            # thus merging the data frames need to be done according to date
+            self.data = self.data.merge(his, on='date', how='outer')
 
     def run_query(self, measure=None):
         # delete non-key columns associated with table
@@ -228,10 +207,7 @@ class MultiStockQuery(StockQuery):
             if measure is None:
                 measure = "close"
             history = self.get_data(ticker, [measure], date_obj=True)
-            for day in history:
-                # replace history price measure key with ticker
-                day[ticker] = day[measure]
-                del day[measure]
+            history.rename(columns={measure: ticker}, inplace=True)
             self.merge_price_history(history)
         return True
 
