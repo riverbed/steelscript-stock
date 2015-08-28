@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Riverbed Technology, Inc.
+# Copyright (c) 2015 Riverbed Technology, Inc.
 #
 # This software is licensed under the terms and conditions of the MIT License
 # accompanying the software ("License").  This software is distributed "AS IS"
@@ -11,7 +11,7 @@ from pprint import pprint
 from steelscript.common.app import Application
 from steelscript.common.timeutils import TimeParser
 from steelscript.common.connection import Connection
-
+from steelscript.common.exceptions import RvbdHTTPException
 
 # Mapping from price measure to the relative position
 # in the response string
@@ -85,7 +85,7 @@ def get_historical_prices(begin, end, symbol, measures,
                 if m in mapping:
                     daily_prices[m] = float(day[mapping[m]])
             ret.append(daily_prices)
-    except:
+    except RvbdHTTPException:
         raise StockApiException("Symbol '%s' is invalid or Stock '%s' was"
                                 " not on market on %s" % (symbol, symbol,
                                                           end))

@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Riverbed Technology, Inc.
+# Copyright (c) 2015 Riverbed Technology, Inc.
 #
 # This software is licensed under the terms and conditions of the MIT License
 # accompanying the software ("License").  This software is distributed "AS IS"
@@ -31,6 +31,8 @@ from steelscript.appfwk.apps.datasource.forms import (
     DateTimeField, ReportSplitDateWidget)
 
 from steelscript.stock.core.app import get_historical_prices
+from steelscript.appfwk.apps.jobs import \
+    QueryComplete
 
 logger = logging.getLogger(__name__)
 
@@ -176,8 +178,8 @@ class SingleStockQuery(StockQuery):
     def run(self):
         self.prepare()
         measures = ["open", "high", "low", "close"]
-        self.data = self.get_data(self.symbol, measures)
-        return True
+        df = self.get_data(self.symbol, measures)
+        return QueryComplete(df)
 
 
 class MultiStockQuery(StockQuery):
@@ -203,13 +205,14 @@ class MultiStockQuery(StockQuery):
         for ticker in self.symbol.split(","):
             # strip white spaces
             ticker = ticker.strip()
-            StockColumn.create(self.table, ticker, ticker.upper())
+            if ticker not in map(lambda x: x.name, self.table.get_columns()):
+                StockColumn.create(self.table, ticker, ticker.upper())
             if measure is None:
                 measure = "close"
             history = self.get_data(ticker, [measure], date_obj=True)
             history.rename(columns={measure: ticker}, inplace=True)
             self.merge_price_history(history)
-        return True
+        return QueryComplete(self.data)
 
 
 class MultiStockPriceQuery(MultiStockQuery):
