@@ -204,7 +204,7 @@ class MultiStockQuery(StockQuery):
 
         for ticker in self.symbol.split(","):
             # strip white spaces
-            ticker = ticker.strip()
+            ticker = ticker.strip().lower()
             if ticker not in map(lambda x: x.name, self.table.get_columns()):
                 StockColumn.create(self.table, ticker, ticker.upper())
             if measure is None:
