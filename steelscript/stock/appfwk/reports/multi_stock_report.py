@@ -28,7 +28,7 @@ import steelscript.appfwk.apps.report.modules.yui3 as yui3
 # Import the datasource module for this plugin (if needed)
 import steelscript.stock.appfwk.datasources.stock_source as stock
 
-report = Report.create("Stock Report-Multiple Stocks", position=1)
+report = Report.create("Stock Report-Multiple Stocks", position=11)
 
 report.add_section()
 
