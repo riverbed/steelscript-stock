@@ -1,15 +1,22 @@
-stock
-========
-simple stock report
+Riverbed SteelScript Application Framework - Stock Report
+=========================================================
 
-The directory structure is as follows:
+The SteelScript Application Framework makes it easy to create a fully
+custom web application that mashes up data from multiple sources.  This
+package demonstrates the use of an external datasource and custom reports for
+the App Framework.
 
-* ./README.rst -- this file
-* ./setup.py -- package installation parameters
-* ./steelscript -- package source files files
-* ./steelscript/stock/core/ -- core source files
-* ./steelscript/stock/appfwk/plugin.py -- plugin information
-* ./steelscript/stock/appfwk/datasources/ - directory
-* ./steelscript/stock/appfwk/devices/ - directory of devices
-* ./steelscript/stock/appfwk/reports/ - directory of reports
-* ./steelscript/stock/appfwk/libs/ - helper functions
+For a complete guide to installation, see:
+
+  `https://support.riverbed.com/apis/steelscript/index.html <https://support.riverbed.com/apis/steelscript/index.html>`_
+
+License
+=======
+
+Copyright (c) 2015 Riverbed Technology, Inc.
+
+SteelScript-Stock is licensed under the terms and conditions of
+the MIT License accompanying the software ("License").
+SteelScript-Stock is distributed "AS IS" as set forth in the
+License.
+

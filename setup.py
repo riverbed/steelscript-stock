@@ -4,33 +4,37 @@
 # accompanying the software ("License").  This software is distributed "AS IS"
 # as set forth in the License.
 
-"""
-steelscript.stock
-====================
-simple stock report
 
-"""
 from setuptools import setup, find_packages
 from gitpy_versioning import get_version
 
 install_requires = (
     'steelscript.appfwk',
-
-    # Add any special python package requirements below this line
 )
 
 setup_args = {
     'name':                'steelscript.stock',
     'namespace_packages':  ['steelscript'],
     'version':             get_version(),
-
-    # Update the following as needed
-    'author':              'wg',
-    'author_email':        'wg@s.n',
-    'url':                 '',
+    'author':             'Riverbed Technology',
+    'author_email':       'eng-github@riverbed.com',
+    'url':                'http://pythonhosted.org/steelscript',
     'license':             'MIT',
-    'description':         'simple stock report',
-    'long_description':    __doc__,
+    'description':         'Stock Report plugin for SteelScript Application Framework',
+    'long_description':    """\
+Stock Report for SteelScript Application Framework
+==================================================
+
+SteelScript is a collection of libraries and scripts in Python and JavaScript
+for interacting with Riverbed Technology devices.
+
+This package demonstrates how an external data source can be incorporated
+as a plugin to App Framework, with associated reports.
+
+For a complete guide to installation, see:
+
+http://pythonhosted.org/steelscript/
+    """,
 
     'packages': find_packages(exclude=('gitpy_versioning',)),
     'zip_safe': False,
@@ -39,10 +43,6 @@ setup_args = {
     'test_suite': '',
     'include_package_data': True,
     'entry_points': {
-        # Uncomment these lines to enable steel commands for this module
-        # 'steel.commands': [
-        #     'stock = steelscript.stock.commands'
-        # ],
         'portal.plugins': [
             'stock = steelscript.stock.appfwk.plugin:Plugin'
         ],
@@ -52,6 +52,7 @@ setup_args = {
         'Framework :: Django',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
+        'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Topic :: Software Development'
     ),
