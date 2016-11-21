@@ -23,7 +23,7 @@ See the documeantion or sample plugin for more details
 """
 
 from steelscript.appfwk.apps.report.models import Report
-import steelscript.appfwk.apps.report.modules.yui3 as yui3
+import steelscript.appfwk.apps.report.modules.c3 as c3
 
 # Import the datasource module for this plugin (if needed)
 import steelscript.stock.appfwk.datasources.stock_source as stock
@@ -44,12 +44,12 @@ table = stock.MultiStockPriceTable.create(name='multi-stock-price',
 table.add_column('date', 'Date', datatype='date', iskey=True)
 
 # Bind the table to a widget for display
-report.add_widget(yui3.TimeSeriesWidget, table, 'Close Prices', width=12)
+report.add_widget(c3.TimeSeriesWidget, table, 'Close Prices', width=12)
 
 
 # Implement a widget to display the daily volumns for multiple stocks
 table = stock.MultiStockVolumeTable.create(name='multi-stock-volume',
                                            duration='52w', resolution='day')
 table.add_column('date', 'Date', datatype='date', iskey=True)
-report.add_widget(yui3.TimeSeriesWidget, table, 'Daily Volumes', width=12,
+report.add_widget(c3.TimeSeriesWidget, table, 'Daily Volumes', width=12,
                   bar=True)
