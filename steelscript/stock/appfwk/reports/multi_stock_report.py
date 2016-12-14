@@ -51,5 +51,4 @@ report.add_widget(c3.TimeSeriesWidget, table, 'Close Prices', width=12)
 table = stock.MultiStockVolumeTable.create(name='multi-stock-volume',
                                            duration='52w', resolution='day')
 table.add_column('date', 'Date', datatype='date', iskey=True)
-report.add_widget(c3.TimeSeriesWidget, table, 'Daily Volumes', width=12,
-                  bar=True)
+report.add_widget(c3.TimeSeriesWidget, table, 'Daily Volumes', width=12)
