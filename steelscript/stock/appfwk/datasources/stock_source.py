@@ -37,9 +37,13 @@ from steelscript.appfwk.apps.jobs import \
 logger = logging.getLogger(__name__)
 
 
+APP_LABEL = 'steelscript.stock.appfwk'
+
+
 class StockColumn(Column):
     class Meta:
         proxy = True
+        app_label = APP_LABEL
 
     COLUMN_OPTIONS = {}
 
@@ -47,6 +51,7 @@ class StockColumn(Column):
 class StockTable(DatasourceTable):
     class Meta:
         proxy = True
+        app_label = APP_LABEL
 
     _column_class = 'StockColumn'
     FIELD_OPTIONS = {'duration': '4w',
@@ -101,6 +106,7 @@ class SingleStockTable(StockTable):
     """
     class Meta:
         proxy = True
+        app_label = APP_LABEL
 
     _query_class = 'SingleStockQuery'
 
@@ -119,6 +125,7 @@ class MultiStockTable(StockTable):
     """
     class Meta:
         proxy = True
+        app_label = APP_LABEL
 
     TABLE_OPTIONS = {'stock_symbol': None}
 
@@ -132,6 +139,7 @@ class MultiStockTable(StockTable):
 class MultiStockPriceTable(MultiStockTable):
     class Meta:
         proxy = True
+        app_label = APP_LABEL
 
     _query_class = 'MultiStockPriceQuery'
 
@@ -139,6 +147,7 @@ class MultiStockPriceTable(MultiStockTable):
 class MultiStockVolumeTable(MultiStockTable):
     class Meta:
         proxy = True
+        app_label = APP_LABEL
 
     _query_class = 'MultiStockVolumeQuery'
 
