@@ -1,8 +1,11 @@
 CHANGELOG
 =========
 
-[1.1.1]
+[1.1.2]
  * Django 1.8 compatibility
+
+[1.1.1]
+ * Fix bar widget 
 
 [1.1]
  * Update reports to use c3 library. YUI deprecated.
