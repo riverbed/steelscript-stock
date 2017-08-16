@@ -48,14 +48,14 @@ http://pythonhosted.org/steelscript/
         ],
     },
 
-    'classifiers': (
+    'classifiers': [
         'Framework :: Django',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Topic :: Software Development'
-    ),
+    ],
 }
 
 setup(**setup_args)
